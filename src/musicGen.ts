@@ -1,12 +1,17 @@
 import Chain from 'markov-chains';
 import * as Tone from "tone";
 import {
-    parseMidi, Song
+    parseMidi,
+    Song
 } from "./parseMidi"
-import { NoteJSON } from '@tonejs/midi/dist/Note';
+import {
+    NoteJSON
+} from '@tonejs/midi/dist/Note';
+import {
+    Sampler
+} from 'tone';
 
 const COMMA = ',';
-let toneContext = Tone.getContext();
 
 export const genMusic = async () => {
     const song = await parseMidi("");
@@ -14,8 +19,7 @@ export const genMusic = async () => {
     playNotes(parsedNotes, song)
 }
 
-function parseNotes(song:Song) {
-    // const song = parseMidi(" ");
+function parseNotes(song: Song) {
     const notes: NoteJSON[] = song.tracks[0].notes;
     if (song.tracks[1]) {
         notes.push.apply(notes, song.tracks[1].notes);
@@ -50,66 +54,65 @@ function parseNotes(song:Song) {
     return phrasesIndexed;
 }
 
-function playNotes(parsedNotes:string[][], song:Song) {
-    Tone.start();
-    toneContext.transport.PPQ = song.ppq;
+let sampler:Sampler;
+
+const buildPhrase = (parsedNotes: string[][], song: Song) => {
+    const chain = new Chain(parsedNotes);
     let totalWaitTime = 0;
     let tempWaitTime = 0;
-    const chain = new Chain(parsedNotes);
-    // const sampler = new Tone.Sampler({
-    //     urls: {
-    //         A1: "A1.mp3",
-    //         A2: "A2.mp3",
-    //     },
-    //     baseUrl: "https://tonejs.github.io/audio/casio/"
-    // }).toDestination();
-    const sampler = new Tone.Sampler({
-        urls: {
-            "C4": "C4.mp3",
-            "D#4": "Ds4.mp3",
-            "F#4": "Fs4.mp3",
-            "A4": "A4.mp3",
-        },
-        release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
-    }).toDestination();
+    while (totalWaitTime <= song.length) {
+        var walker = chain.walk();
+        walker.forEach((noteName: String) => {
+            const [t, ...names] = noteName.split(COMMA);
+            const parsedT = Number.parseInt(t, 10);
+            names.forEach(name => {
+                const waitTime = parsedT * song.noteInterval + totalWaitTime;
+                tempWaitTime = waitTime;
+                sampler.triggerAttack(
+                    name,
+                    `+${waitTime+1+Math.random()*0.05-0.025}`
+                )
+            });
+        });
+
+        totalWaitTime = tempWaitTime + 1;
+    }
+}
+
+let phraseBuilder = () => {};
+
+function playNotes(parsedNotes: string[][], song: Song) {
+    Tone.Transport.PPQ = song.ppq;
+    sampler = new Tone.Sampler({
+            urls: {
+                "C4": "C4.mp3",
+                "D#4": "Ds4.mp3",
+                "F#4": "Fs4.mp3",
+                "A4": "A4.mp3",
+            },
+            release: 1,
+            baseUrl: "https://tonejs.github.io/audio/salamander/",
+        });
     sampler.volume.value = -10;
     sampler.toDestination();
-    let schedulePhrase;
+
+    phraseBuilder = () => buildPhrase(parsedNotes, song);
 
     Tone.loaded().then(() => {
-        schedulePhrase = () => {
-            while (totalWaitTime <= song.length) {
-                var walker = chain.walk();
-                walker.forEach((noteName: String) => {
-                    const [t, ...names] = noteName.split(COMMA);
-                    const parsedT = Number.parseInt(t, 10);
-                    names.forEach(name => {
-                        const waitTime = parsedT * song.noteInterval + totalWaitTime;
-                        tempWaitTime = waitTime;
-                        sampler.triggerAttack(
-                            name,
-                            `+${waitTime+1+Math.random()*0.05-0.025}`
-                        )
-                    });
-                });
-
-                totalWaitTime = tempWaitTime + 1;
-            }
-        }
-        
-        toneContext.transport.scheduleRepeat(
-            schedulePhrase,
+        Tone.Transport.scheduleOnce(
+            phraseBuilder,
             song.phraseLength * song.noteInterval
         )
 
-        toneContext.transport.start();
+        Tone.Transport.start();
+        Tone.start();
     })
 }
 
 export function stopPlaying() {
-    Tone.Transport.stop(0);
-    toneContext.transport.stop(0);
+    Tone.Transport.cancel();
+    Tone.Transport.stop();
+    sampler.dispose();
 }
 
 export default genMusic;
