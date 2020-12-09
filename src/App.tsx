@@ -3,11 +3,18 @@ import {stopPlaying, genMusic} from './musicGen';
 
 function App() {
   return (
-    <div className="App">
-      <header><h1>Markov Music Generation</h1></header>
-      <button id='button' onClick={genMusic}>Play Music</button>
-      <input type="button" value="Stop" onClick={stopPlaying}/>
+    <section className="hero is-dark">
+    <div className="hero-body">
+      <div className="container">
+        <h1 className="title">
+          Markov Music Generation
+        </h1>
+        <h2 className="subtitle">
+          Generating new music from old music with Markov Chains
+        </h2>
+      </div>
     </div>
+  </section>
   );
 }
 

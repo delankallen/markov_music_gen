@@ -15,32 +15,30 @@ const COMMA = ',';
 
 export const genMusic = async () => {
     const song = await parseMidi("");
-    const parsedNotes = parseNotes(song)
+    const parsedNotes = quantizeNotes(song)
     playNotes(parsedNotes, song)
 }
 
-function parseNotes(song: Song) {
+function quantizeNotes(song: Song) {
     const notes: NoteJSON[] = song.tracks[0].notes;
     if (song.tracks[1]) {
         notes.push.apply(notes, song.tracks[1].notes);
     }
 
-    const sixteenthNotes = [];
+    const quantizedNotes = [];
 
-    for (let time = 0; time <= song.length; time += song.noteInterval) {
+    for (let i = 0; i <= song.length; i += song.noteInterval) {
         const names = notes.filter(
-                note => time <= note.time && note.time < time + song.noteInterval
-            ).map(({
-                name
-            }) => name)
+                note => i <= note.time && note.time < i + song.noteInterval
+            ).map(({ name }) => name)
             .sort();
 
-        sixteenthNotes.push(names.join(COMMA));
+        quantizedNotes.push(names.join(COMMA));
     }
 
     const phrases = [];
 
-    const enCopy = sixteenthNotes.slice(0);
+    const enCopy = quantizedNotes.slice(0);
     while (enCopy.length > 0) {
         phrases.push(enCopy.splice(0, song.phraseLength));
     }
@@ -75,7 +73,7 @@ const buildPhrase = (parsedNotes: string[][], song: Song) => {
             });
         });
 
-        totalWaitTime = tempWaitTime + 1;
+        totalWaitTime = tempWaitTime + song.noteInterval + 1;
     }
 }
 
@@ -83,12 +81,19 @@ let phraseBuilder = () => {};
 
 function playNotes(parsedNotes: string[][], song: Song) {
     Tone.Transport.PPQ = song.ppq;
+    if (sampler) {
+        stopPlaying();
+    }
     sampler = new Tone.Sampler({
             urls: {
+                "C1": "C1.mp3",
                 "C4": "C4.mp3",
+                "C6": "C6.mp3",
                 "D#4": "Ds4.mp3",
                 "F#4": "Fs4.mp3",
+                "A1": "A1.mp3",
                 "A4": "A4.mp3",
+                "A6": "A6.mp3"
             },
             release: 1,
             baseUrl: "https://tonejs.github.io/audio/salamander/",
