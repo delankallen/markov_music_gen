@@ -89,8 +89,12 @@ function playNotes(parsedNotes: string[][], song: Song) {
                 "C1": "C1.mp3",
                 "C4": "C4.mp3",
                 "C6": "C6.mp3",
+                "D#1": "Ds1.mp3",
                 "D#4": "Ds4.mp3",
+                "D#6": "Ds6.mp3",
+                "F#1": "Fs1.mp3",
                 "F#4": "Fs4.mp3",
+                "F#6": "Fs6.mp3",
                 "A1": "A1.mp3",
                 "A4": "A4.mp3",
                 "A6": "A6.mp3"
