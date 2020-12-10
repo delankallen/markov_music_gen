@@ -2,6 +2,7 @@ import React from 'react'
 import { Midi } from '@tonejs/midi';
 import { genMusic, stopPlaying } from '../musicGen'
 import {displayStats} from '../stats'
+import * as Tone from "tone";
 
 const FirstLoad = () => {
     if(!document.querySelector("#noteStat1")) {
@@ -154,7 +155,10 @@ export const MusicControls = () => {
                 </div>
             </div>
             <footer className="card-footer">
-                <a href="#" className="card-footer-item has-text-link-dark" onClick={genMusic}>Play</a>
+                <a href="#" className="card-footer-item has-text-link-dark" onClick={()=>{
+                    Tone.start();
+                    genMusic();
+                    }}>Play</a>
                 <a href="#" className="card-footer-item has-text-link-dark" onClick={stopPlaying}>Stop</a>
             </footer>
         </div>
