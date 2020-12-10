@@ -1,4 +1,6 @@
 import { Midi, TrackJSON } from '@tonejs/midi'
+import { getImportedMidi } from './components/SelectSong'
+
 export interface Song {
     name: string;
     bpm: number;
@@ -27,23 +29,28 @@ export async function parseMidi(midiJson:string) {
     let midiFile = document.querySelector('#songSelect') as HTMLSelectElement;
     let phraseLength = document.querySelector('#phraseSelect') as HTMLSelectElement;
     let notesInBeat = document.querySelector('#notesInBeatSelect') as HTMLSelectElement;
-    let lamb = await Midi.fromUrl(`./${midiFile ? midiFile.value : "./moonlight_sonata.mid"}`)
+    let jMidi: Midi;
+    if(getImportedMidi()) {
+        jMidi = getImportedMidi() as Midi;
+    }else {
+        jMidi = await Midi.fromUrl(`./${midiFile ? midiFile.value : "./moonlight_sonata.mid"}`);
+    }
 
     let newSong:Song = {
-        name: lamb.header.name,
-        bpm: Math.ceil(lamb.header.tempos[0].bpm),
+        name: jMidi.header.name,
+        bpm: Math.ceil(jMidi.header.tempos[0].bpm),
         notesInBeat: 0,
         noteInterval: 0,
-        length: Math.ceil(lamb.duration),
+        length: Math.ceil(jMidi.duration),
         phraseLength: 0,
-        tracks: lamb.tracks,
-        ppq: lamb.header.ppq
+        tracks: jMidi.tracks,
+        ppq: jMidi.header.ppq
     }
 
     if (notesInBeat && +notesInBeat.value !== 0) {
         newSong.notesInBeat = +notesInBeat.value;
     } else {
-        newSong.notesInBeat = getNotesInBeat(Math.min(...lamb.tracks[0].notes.map(x => x.duration)))
+        newSong.notesInBeat = getNotesInBeat(Math.min(...jMidi.tracks[0].notes.map(x => x.duration)))
     }
 
     newSong.phraseLength = phraseLength ? +phraseLength.value : 8;

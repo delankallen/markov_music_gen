@@ -1,6 +1,4 @@
 import React from 'react'
-//@ts-ignore
-import Latex from 'react-latex'
 import { displayStats } from '../stats'
 
 const Info = () => {
@@ -20,14 +18,13 @@ const Info = () => {
                         The note names and their duration are read from the JSON file.
                         The duration of each note is normalized to a discrete fraction of a whole note; Eighth notes, sixteenth notes.
                         Once the notes are quantized they are broken into phrases. <br/>
-                        Take the first 16 notes, divided into 8 beat phrases of Mary Had a Little Lamb, 1E 1D 1C 1D 1E 1E 2E, 1D 1D 2D 1E 1G 2G. <br/>
-                        <Latex displayMode={true}>$$C=\frac 6 8,  D=\frac 1 8, G=\frac 1 8$$</Latex> <br/>
-                        The length of the phrase can affect how random the song will sound.
-                        The shorter the phrase length, the less the notes will be mixed. 
-                        The generated music will sound more like the source with shorter phrase lengths.
+                        The phrases are built into a Markov Chain, which then arranges the phrases into a new melody. <br/>
+                        Longer phrases will retain more of the original musical intention.
                            <br/>
                            <br/>
-                        <p>There are four midi files to choose from:</p>
+                        <p>There are four midi files to choose from. 
+                            I have included recommendations, but play around with phrases and notes to find interesting combinations:
+                        </p>
                         
                         <ul>
                             <li>Moonlight Sonata 1st Movement by Beethoven</li>

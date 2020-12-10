@@ -1,4 +1,5 @@
 import React from 'react'
+import { Midi } from '@tonejs/midi';
 import { genMusic, stopPlaying } from '../musicGen'
 import {displayStats} from '../stats'
 
@@ -17,7 +18,10 @@ export const SelectSong = () => {
             <label className="label" htmlFor="songSelect">Select a song to chain:</label>
             <div className="control ">
                 <div className="select">
-                    <select defaultValue="moonlight_sonata.mid" id="songSelect" onChange={displayStats} onLoad={displayStats}>
+                    <select defaultValue="moonlight_sonata.mid" id="songSelect" onChange={() => {
+                        clearImportedMidi();
+                        displayStats();
+                    }} onLoad={displayStats}>
                         <option value="moonlight_sonata.mid">Moonlight Sonata 1st Mvt</option>
                         <option value="bach_846.mid">Bach 846</option>
                         <option value="gymno.mid">Gymnopedia No.1</option>
@@ -33,7 +37,7 @@ export const SelectSong = () => {
 
 export const SelectPhrase = () => {
     return (
-        <div className="field column">
+        <div className="field ">
             <label className="label" htmlFor="phraseSelect">Select a phrase length</label>
             <div className="control ">
                 <div className="select">
@@ -53,7 +57,7 @@ export const SelectPhrase = () => {
 
 export const SelectNotesInBeat = () => {
     return (
-        <div className="field column">
+        <div className="field ">
             <label className="label" htmlFor="phraseSelect">Select notes in beat</label>
             <div className="control ">
                 <div className="select">
@@ -71,6 +75,56 @@ export const SelectNotesInBeat = () => {
     )
 }
 
+let importedMidi:Midi | null;
+
+export const getImportedMidi = () => {
+    return importedMidi;
+}
+
+const setImportedMidi = (midiIn:Midi) => {
+    importedMidi = midiIn;
+}
+
+const clearImportedMidi = () => {
+    (document.querySelector("#importMidi") as HTMLInputElement).value = "";
+    importedMidi = null;
+}
+
+const ImportFile = () => {
+    const parseFile = (file: Blob) => {
+        const fileReader = new FileReader();
+        fileReader.onloadend = (e) => {
+            if (e.target){
+                const res = e.target.result as ArrayBuffer;
+                const midi = new Midi(res);
+                setImportedMidi(midi);
+                displayStats();
+            }
+        }
+        fileReader.readAsArrayBuffer(file);
+    }
+
+    return (
+        <div className="field">
+            <label className="label" htmlFor="importMidi">Upload a midi file:</label>
+            <div className="control">
+                <input type="file"
+                id="importMidi"
+                className="input"
+                accept='.mid'
+                onChange={e => {
+                    const files = e.target.files;
+                    if (files && files.length > 0) {
+                        const file = files[0];
+                        parseFile(file);
+                    }
+                }} />
+            </div>
+        </div>
+    )
+
+}
+
 export const MusicControls = () => {
     return (
         <div className="column">
@@ -82,18 +136,26 @@ export const MusicControls = () => {
             </header>
             <div className="card-content">
                 <div className="content">
-                    <SelectSong />
                     <div className="columns">
-                        <SelectPhrase />
-                        <SelectNotesInBeat/>
+                        <div className="column">
+                            <SelectSong />
+                            <SelectPhrase />
+                        </div>
+                        <div className="column">
+                            <ImportFile />
+                            <SelectNotesInBeat/>
+                        </div>
                     </div>
                     
-                    <p>Note: Music may take a minute to start playing.</p>
+                    <p>
+                        Note: Music may take a minute to start playing. <br/>
+                        If the audio starts to sound bad, refresh the page. <br/>
+                        Some minor static and popping is normal</p>
                 </div>
             </div>
             <footer className="card-footer">
-                <a className="card-footer-item has-text-link-dark" onClick={genMusic}>Play</a>
-                <a className="card-footer-item has-text-link-dark" onClick={stopPlaying}>Stop</a>
+                <a href="#" className="card-footer-item has-text-link-dark" onClick={genMusic}>Play</a>
+                <a href="#" className="card-footer-item has-text-link-dark" onClick={stopPlaying}>Stop</a>
             </footer>
         </div>
         </div>
