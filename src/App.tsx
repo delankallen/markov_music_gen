@@ -1,5 +1,4 @@
 import React from 'react';
-import {stopPlaying, genMusic} from './musicGen';
 
 function App() {
   return (

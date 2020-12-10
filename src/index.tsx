@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import MusicControls from './components/SelectSong';
-import Info from './components/Info';
+import Info, { SongStats } from './components/Info';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -11,8 +11,13 @@ ReactDOM.render(
     <App />
       <div className="container">
         <div className="columns">
-          <MusicControls />
-          <Info />
+          <div className="column">
+            <MusicControls />
+            <SongStats />
+          </div>
+          <div className="column">
+            <Info />
+          </div>
         </div>
       </div>
     </div>

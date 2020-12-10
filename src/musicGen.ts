@@ -1,3 +1,4 @@
+//@ts-ignore
 import Chain from 'markov-chains';
 import * as Tone from "tone";
 import {
@@ -14,6 +15,7 @@ import {
 const COMMA = ',';
 
 export const genMusic = async () => {
+    Tone.setContext(new Tone.Context({ latencyHint : "interactive" }))
     const song = await parseMidi("");
     const parsedNotes = quantizeNotes(song)
     playNotes(parsedNotes, song)
@@ -113,7 +115,7 @@ function playNotes(parsedNotes: string[][], song: Song) {
             song.phraseLength * song.noteInterval
         )
 
-        Tone.Transport.start();
+        Tone.Transport.start("+0.1");
         Tone.start();
     })
 }
