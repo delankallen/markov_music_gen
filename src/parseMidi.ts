@@ -33,7 +33,7 @@ export async function parseMidi(midiJson:string) {
     if(getImportedMidi()) {
         jMidi = getImportedMidi() as Midi;
     }else {
-        jMidi = await Midi.fromUrl(`./${midiFile ? midiFile.value : "./moonlight_sonata.mid"}`);
+        jMidi = await Midi.fromUrl(`./${midiFile ? midiFile.value : "./gymno.mid"}`);
     }
 
     let newSong:Song = {

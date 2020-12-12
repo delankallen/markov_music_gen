@@ -33,7 +33,7 @@ const Info = () => {
                                 </ul>
                             <li>Gymnopedia No.1 by Erik Satie</li>
                                 <ul>
-                                    <li>Recommend phrase length 8</li>
+                                    <li>Recommend phrase length 16</li>
                                 </ul>
                             <li>Prelude in C major (Bach BWV 846) by Bach</li>
                                 <ul>

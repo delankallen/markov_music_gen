@@ -19,7 +19,7 @@ export const SelectSong = () => {
             <label className="label" htmlFor="songSelect">Select a song to chain:</label>
             <div className="control ">
                 <div className="select">
-                    <select defaultValue="moonlight_sonata.mid" id="songSelect" onChange={() => {
+                    <select defaultValue="gymno.mid" id="songSelect" onChange={() => {
                         clearImportedMidi();
                         displayStats();
                     }} onLoad={displayStats}>
@@ -42,7 +42,7 @@ export const SelectPhrase = () => {
             <label className="label" htmlFor="phraseSelect">Select a phrase length</label>
             <div className="control ">
                 <div className="select">
-                    <select defaultValue="8" id="phraseSelect">
+                    <select defaultValue="16" id="phraseSelect">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="4">4</option>
