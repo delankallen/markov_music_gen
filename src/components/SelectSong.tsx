@@ -44,6 +44,7 @@ export const SelectPhrase = () => {
                 <div className="select">
                     <select defaultValue="8" id="phraseSelect">
                         <option value="1">1</option>
+                        <option value="2">2</option>
                         <option value="4">4</option>
                         <option value="8">8</option>
                         <option value="16">16</option>
@@ -155,11 +156,11 @@ export const MusicControls = () => {
                 </div>
             </div>
             <footer className="card-footer">
-                <a href="#" className="card-footer-item has-text-link-dark" onClick={()=>{
+                <a  className="card-footer-item has-text-link-dark" onClick={()=>{
                     Tone.start();
                     genMusic();
                     }}>Play</a>
-                <a href="#" className="card-footer-item has-text-link-dark" onClick={stopPlaying}>Stop</a>
+                <a  className="card-footer-item has-text-link-dark" onClick={stopPlaying}>Stop</a>
             </footer>
         </div>
         </div>

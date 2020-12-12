@@ -21,7 +21,7 @@ export const genMusic = async () => {
     playNotes(parsedNotes, song)
 }
 
-function quantizeNotes(song: Song) {
+export const quantizeNotes = (song: Song) => {
     const notes: NoteJSON[] = song.tracks[0].notes;
     if (song.tracks[1]) {
         notes.push.apply(notes, song.tracks[1].notes);
@@ -38,18 +38,19 @@ function quantizeNotes(song: Song) {
         quantizedNotes.push(names.join(COMMA));
     }
 
-    const phrases = [];
+    const quantizedPhrases = [];
 
-    const enCopy = quantizedNotes.slice(0);
-    while (enCopy.length > 0) {
-        phrases.push(enCopy.splice(0, song.phraseLength));
+    const tempArray = quantizedNotes.slice(0);
+    while (tempArray.length > 0) {
+        quantizedPhrases.push(tempArray.splice(0, song.phraseLength));
     }
 
-    const phrasesIndexed = phrases.map(phrase =>
-        phrase.map((names, i) =>
-            names.length === 0 ? `${i}` : `${i}${COMMA}${names}`
-        )
-    );
+    const phrasesIndexed = 
+        quantizedPhrases.map(phrase =>
+            phrase.map((names, i) =>
+                names.length === 0 ? `${i}` : `${i}${COMMA}${names}`
+            )
+    );  
 
     return phrasesIndexed;
 }
@@ -81,7 +82,7 @@ const buildPhrase = (parsedNotes: string[][], song: Song) => {
 
 let phraseBuilder = () => {};
 
-function playNotes(parsedNotes: string[][], song: Song) {
+const playNotes =(parsedNotes: string[][], song: Song) => {
     Tone.Transport.PPQ = song.ppq;
     if (sampler) {
         stopPlaying();
