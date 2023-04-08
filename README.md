@@ -1,7 +1,6 @@
 # Generate music with Markov Chains
 
 Use the supplied midi music or supply your own and generate new music using markov chains.
-You can run the program yourself or check it out running on my website, [oarfish.dev](https://oarfish.dev)
 
 ## Available Scripts
 
